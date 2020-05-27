@@ -65,8 +65,7 @@ app.post('/submitArabic', function (req, res, next) {
   })
   req.on('end', function(){
     recvData = JSON.parse(dataStream)
-    console.log(recvData.data)
-    var algoReturn= test.algo(recvData.data)
+    var algoReturn = test.algo(recvData.data)
     console.log(algoReturn)
   })
 })
@@ -83,5 +82,5 @@ app.post('/submit', upload.single('Img'), function (req, res) {
   });
 })
 
-//starting the application (see README.md for details on how to start the program)
+//starting the application - see README.md for details on how to start the program
 app.listen(port, () => console.log(`App listening on port ${port}!`));

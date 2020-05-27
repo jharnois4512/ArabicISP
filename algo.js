@@ -7,7 +7,7 @@ exports.algo = function(x){
   /*Part A - Normalization*/
   illegal = ['-', '?', '!', ',', '.', '/', '\\', '_', '#', '$', '(', ')']
   /*Part B - list of constant letters*/
-  //constant = ['\u', '\u', '\u']
+  // constant = ['\u0631', '\u0632', '\u0634', '\u0635', '\u0636', '\u', '\u', '\u', '\u', '\u', '\u']
   /*Part C - */
   prefix = ['\u0628', '\u0641', '\u0633', '\u0644']
   suffex = ['\uFEEB']
