@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arabic Root System Dictionary</title>
+    <link rel='shortcut icon' type='image/x-icon' href="/favicon.ico" />
+    <!-- yamli api-->
+    <script type="text/javascript" src="/api"></script>
+    <!--jquery-->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!--angular-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <body>
+    <div id = "inputDiv">
+      Submit transliteration!
+        <form action="submitArabic" method="POST" enctype="application/json">
+            <br><input type="textarea" id="text">
+            <input type="submit" value="Submit" onclick="submitform()">
+        </form>
+        Or upload a photo!
+        <form action="submit" method="POST" enctype="multipart/form-data">
+          <br><input type="file" name="Img" /><br>
+          <input type="submit" value="Submit">
+         </form>
+    </div>
+  </body>
+  <!-- TODO: Convert to AngularJS-->
+  <script>
+    //settings
+    /*yamli settings*/
+    if (typeof(Yamli) == 'object' && Yamli.init({ startMode:'on' })){
+      Yamli.yamlify('text', {settingsPlacement:'hide', uiLanguage:'en'});
+    }
+
+    //methods 
+    function submitform(){
+      var formData = document.getElementById("text").value 
+      console.log(formData)
+      var jsonform = {data: formData}
+      var jsonObj = JSON.stringify(jsonform)
+      console.log(jsonObj)
+      $.ajax({
+        type: "POST",
+        url: "submitArabic",
+        data: jsonObj,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(){}
+      })
+    };
+  </script>
+</html>
