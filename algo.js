@@ -1,5 +1,10 @@
 
 exports.algo = function(x){
+  var errorFlag = 0
+  if(x === ' '){
+    errorFlag = 1
+    return errorFlag
+  }
   //error checking for a space
   if(x.indexOf(' ') > 0){
     x = x.substr(0, x.indexOf(' '));
@@ -32,7 +37,10 @@ exports.algo = function(x){
   //execution of rules
   /*searching for illegal characters - part A*/
   holder.forEach(letter => {
-    if(illegal.includes(letter)) throw new Error('Illegal character')
+    if(illegal.includes(letter)){
+      errorFlag = 1
+      return errorFlag
+    }
   });
   /*flagging constant letters - part B*/
   for(var j = 0; j < len; j++){
