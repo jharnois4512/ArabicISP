@@ -9,12 +9,13 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
     <!--angular-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  </head>
   <body>
-    <div id = "inputDiv">
+    <div id="inputDiv">
       Submit transliteration!
         <form action="submitArabic" method="POST" enctype="application/json">
             <br><input type="textarea" id="text">
-            <input type="submit" value="Submit" onclick="submitform()">
+            <input type="submit" value="Submit" onclick="submitform(); return false">
         </form>
         Or upload a photo!
         <form action="submit" method="POST" enctype="multipart/form-data">
@@ -23,7 +24,6 @@
          </form>
     </div>
   </body>
-  <!-- TODO: Convert to AngularJS-->
   <script>
     //settings
     /*yamli settings*/
@@ -44,8 +44,11 @@
         data: jsonObj,
         dataType: "json",
         contentType: "application/json; charset=utf-8",
-        success: function(){}
+        success: function(res){
+          $("body").html(res);
+        }
       })
-    };
+    }
+
   </script>
 </html>
