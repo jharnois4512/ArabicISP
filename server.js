@@ -2,6 +2,7 @@ const test = require('./algo.js');
 const express = require('express')
 const app = express();
 const multer = require('multer');
+const jsdom = require("jsdom");
 const fetch = require("node-fetch");
 const port = 7000
 const spawn = require("child_process").spawn;
@@ -83,9 +84,39 @@ app.post('/submitArabic', function (req, res, next) {
           build[count] = build[count].substring(9)
           count = count + 1
         })
-        var sending = JSON.stringify(build)
-        res.status(201)
-        res.json(sending)
+        console.log(build)
+        var search = Array.from(build[0])
+        var newStart = "https://en.wiktionary.org/wiki/"
+        var newEnd = "#Arabic"
+        var newArabic = ""
+        for(var i = 0; i < search.length; i++){
+          search[i] = encodeURI(search[i])
+        }
+        for(var j = 0; j < search.length; j++){
+           if(j !== search.length -1){
+            newArabic = newArabic + search[j] + "_"
+           }
+           else{
+            newArabic = newArabic + search[j]
+           }
+        }
+        var newURL = newStart + newArabic + newEnd
+        console.log(newURL)
+        fetch(newURL, {
+          method: 'GET',
+          headers: {
+            'Content-Type' : 'application/json'
+          }
+        })
+          .then(data => {
+            return data.text()
+          }).then(function (html){
+            var dom = new jsdom.JSDOM(html)
+            var meaning = dom.window.document.querySelector("ol").textContent
+            var sending = JSON.stringify({"meaning": meaning, "roots": build, "word": recvData.data})
+            res.status(201)
+            res.json(sending)
+          })
       })
   })
 })
