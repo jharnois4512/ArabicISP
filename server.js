@@ -55,6 +55,88 @@ app.get('/favicon.ico', function (req, res) {
   res.sendFile('resources/Morocco.ico', { root: '.' })
 })
 
+//helper methods for post routes
+function getRoot(word){
+  return new Promise(resolve => {
+  var arabic = encodeURI(word)
+  const urlStart = "http://www.aratools.com/dict-service?query={%22dictionary%22:%22AR-EN-WORD-DICTIONARY%22,%22word%22:%22"
+  const urlEnd = "%22,%22dfilter%22:true}&format=json&_=1596542079034"
+  var urlSend = urlStart + arabic + urlEnd
+  console.log(urlSend)
+  var REG_HEX = /&#x([a-fA-F0-9]+);/g;
+  var build = []
+  var count = 0
+  fetch(urlSend).then(res => res.json()).then(data => {
+    var roots = data.result.length
+    data.result.forEach(element => {
+      var tmp = decodeURI(element.solution.root)
+      var decoded = tmp.replace(REG_HEX, function(match, group1){
+        var num = parseInt(group1, 16)
+        build[count] = build[count] + String.fromCharCode(num)
+      })
+      build[count] = build[count].substring(9)
+      count = count + 1
+    })
+    console.log(build)
+    resolve(build)
+  })
+})
+}
+function getMeaningRoot(word){
+  return new Promise(resolve => {
+    var newStart = "https://en.wiktionary.org/wiki/"
+    var newEnd = "#Arabic"
+    var newArabic = ""
+    for(var i = 0; i < word.length; i++){
+      word[i] = encodeURI(word[i])
+    }
+    for(var j = 0; j < word.length; j++){
+        if(j !== word.length -1){
+        newArabic = newArabic + word[j] + "_"
+        }
+        else{
+        newArabic = newArabic + word[j]
+        }
+    }
+    var newURL = newStart + newArabic + newEnd
+    console.log(newURL)
+    fetch(newURL, {
+      method: 'GET',
+      headers: {
+        'Content-Type' : 'application/json'
+      }
+    }).then(data => {
+        return data.text()
+      }).then(function (html){
+        var dom = new jsdom.JSDOM(html)
+        var meaning = dom.window.document.querySelector("ol").textContent
+        resolve(meaning)
+      })
+  })
+}
+
+function getMeaning(word){
+  return new Promise(resolve => {
+    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=8a6c556d.5f2c6434.0a1ac5af.2d-0-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
+    var thirdSending = new URLSearchParams({
+      'text': encodeURI(word),
+      'options': '4'
+    })
+    console.log(urlThird)
+    fetch(urlThird, {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      body: "text=" + encodeURI(word)
+    }).then(data => {
+      return data.text()
+    }).then( function(inside) {
+      resolve(inside)
+    })
+  })
+}
+
 //post methods 
 app.post('/submitArabic', function (req, res, next) { 
   req.setEncoding('utf8')
@@ -62,10 +144,28 @@ app.post('/submitArabic', function (req, res, next) {
   req.on( 'data', function( recv ) {
     dataStream += recv
   })
-  req.on('end', function(){
+  req.on('end', async function(){
     recvData = JSON.parse(dataStream)
-    console.log(recvData.data)
-    var arabic = encodeURI(recvData.data)
+    var root = []
+    root = await getRoot(recvData.data)
+    var search = Array.from(root[0])
+    var rootMeaning = await getMeaningRoot(search)
+    var wordMeaning = await getMeaning(recvData.data)
+    var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning})
+    res.status(200)
+    res.json(sending)
+  })
+})
+
+app.post('/submit', upload.single('Img'), function (req, res) {  
+  var filePath = req.file.path
+  const pythonProcess = spawn('python3',["ArabicImage.py", filePath]);
+  pythonProcess.stdout.on('data', (data) => {
+    var recvString = data.toString()
+    console.log(recvString.substr(0, recvString.indexOf('\n')))
+    var arabic = "" 
+    arabic = recvString.substr(0, recvString.indexOf('\n'))
+    arabic = encodeURI(arabic)
     const urlStart = "http://www.aratools.com/dict-service?query={%22dictionary%22:%22AR-EN-WORD-DICTIONARY%22,%22word%22:%22"
     const urlEnd = "%22,%22dfilter%22:true}&format=json&_=1596542079034"
     var url = urlStart + arabic + urlEnd
@@ -117,41 +217,6 @@ app.post('/submitArabic', function (req, res, next) {
             res.status(201)
             res.json(sending)
           })
-      })
-  })
-})
-
-app.post('/submit', upload.single('Img'), function (req, res) {  
-  var filePath = req.file.path
-  console.log(filePath)
-  const pythonProcess = spawn('python3',["ArabicImage.py", filePath]);
-  pythonProcess.stdout.on('data', (data) => {
-    var recvString = data.toString()
-    console.log(recvString.substr(0, recvString.indexOf('\n')))
-    var arabic = "" 
-    arabic = recvString.substr(0, recvString.indexOf('\n'))
-    arabic = encodeURI(arabic)
-    const urlStart = "http://www.aratools.com/dict-service?query={%22dictionary%22:%22AR-EN-WORD-DICTIONARY%22,%22word%22:%22"
-    const urlEnd = "%22,%22dfilter%22:true}&format=json&_=1596542079034"
-    var url = urlStart + arabic + urlEnd
-    var REG_HEX = /&#x([a-fA-F0-9]+);/g;
-    var build = []
-    var count = 0
-    fetch(url)
-      .then(res => res.json()).then(data => {
-        var roots = data.result.length
-        data.result.forEach(element => {
-          var tmp = decodeURI(element.solution.root)
-          var decoded = tmp.replace(REG_HEX, function(match, group1){
-            var num = parseInt(group1, 16)
-            build[count] = build[count] + String.fromCharCode(num)
-          })
-          build[count] = build[count].substring(9)
-          count = count + 1
-        })
-        var sending = JSON.stringify(build)
-        res.status(201)
-        res.json(sending)
       })
   });
 })
