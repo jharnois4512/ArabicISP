@@ -46,7 +46,8 @@
         contentType: "application/json; charset=utf-8",
         success: function(res){
           $("body").html(res);
-          console.log("here" + res)
+          var results = JSON.parse(res)
+          var wordArr = JSON.parse(results.rootMeaning).words.split("\n")
         }
       })
     }

@@ -79,7 +79,6 @@ function getRoot(word){
       var decoded = tmp.replace(REG_HEX, function(match, group1){
         var num = parseInt(group1, 16)
         if(!build.includes(String.fromCharCode(num).substring(9))){
-          console.log(String.fromCharCode(num))
           build[count] = build[count] + String.fromCharCode(num)
         }
       })
@@ -121,9 +120,11 @@ function getMeaningRoot(word){
         var meaning = dom.window.document.querySelector("ol").textContent
         var adding = ""
         var otherWords = dom.window.document.querySelectorAll("ul")
-        for(var i = 0; i < otherWords.length; i++){
+        console.log(otherWords[3].textContent)
+        for(var i = 3; i < otherWords.length - 14; i++){
           adding = adding + otherWords[i].textContent
         }
+        console.log(adding)
         var jsonMeaning = JSON.stringify({"meaning": meaning, "words": adding})
         resolve(jsonMeaning)
       })
