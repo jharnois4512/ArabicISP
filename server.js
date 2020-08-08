@@ -56,6 +56,12 @@ app.get('/favicon.ico', function (req, res) {
 })
 
 //helper methods for post routes
+
+function removeDuplicates(array) {
+  return array.filter((a, b) => array.indexOf(a) === b)
+}
+
+//TODO: handle errors with methods
 function getRoot(word){
   return new Promise(resolve => {
   var arabic = encodeURI(word)
@@ -72,12 +78,15 @@ function getRoot(word){
       var tmp = decodeURI(element.solution.root)
       var decoded = tmp.replace(REG_HEX, function(match, group1){
         var num = parseInt(group1, 16)
-        build[count] = build[count] + String.fromCharCode(num)
+        if(!build.includes(String.fromCharCode(num).substring(9))){
+          console.log(String.fromCharCode(num))
+          build[count] = build[count] + String.fromCharCode(num)
+        }
       })
       build[count] = build[count].substring(9)
       count = count + 1
     })
-    console.log(build)
+    build = removeDuplicates(build)
     resolve(build)
   })
 })
@@ -110,7 +119,13 @@ function getMeaningRoot(word){
       }).then(function (html){
         var dom = new jsdom.JSDOM(html)
         var meaning = dom.window.document.querySelector("ol").textContent
-        resolve(meaning)
+        var adding = ""
+        var otherWords = dom.window.document.querySelectorAll("ul")
+        for(var i = 0; i < otherWords.length; i++){
+          adding = adding + otherWords[i].textContent
+        }
+        var jsonMeaning = JSON.stringify({"meaning": meaning, "words": adding})
+        resolve(jsonMeaning)
       })
   })
 }
@@ -148,15 +163,22 @@ app.post('/submitArabic', function (req, res, next) {
     recvData = JSON.parse(dataStream)
     var root = []
     root = await getRoot(recvData.data)
-    var search = Array.from(root[0])
+    try{
+      var search = Array.from(root[0])
+    }
+    catch(e){
+      console.log(e)
+      var search = []
+    }
     var rootMeaning = await getMeaningRoot(search)
     var wordMeaning = await getMeaning(recvData.data)
-    var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning})
+    var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning, "word": recvData.data})
     res.status(200)
     res.json(sending)
   })
 })
 
+//TODO: Fix this method to include the helpers
 app.post('/submit', upload.single('Img'), function (req, res) {  
   var filePath = req.file.path
   const pythonProcess = spawn('python3',["ArabicImage.py", filePath]);
