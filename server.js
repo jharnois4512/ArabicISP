@@ -26,7 +26,7 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-//sending files with get methods
+//GET methods
 /*views*/
 app.get('/', function (req, res) {
   res.sendFile('views/Arabic.html', { root: '.' })
@@ -56,7 +56,7 @@ app.get('/favicon.ico', function (req, res) {
 })
 
 //helper methods for post routes
-
+ 
 function removeDuplicates(array) {
   return array.filter((a, b) => array.indexOf(a) === b)
 }
@@ -71,13 +71,16 @@ function getRoot(word){
   console.log(urlSend)
   var REG_HEX = /&#x([a-fA-F0-9]+);/g;
   var build = []
+  var buildMeaning = []
   var count = 0
   fetch(urlSend).then(res => res.json()).then(data => {
     var roots = data.result.length
     data.result.forEach(element => {
+      console.log(element)
       var tmp = decodeURI(element.solution.root)
       var decoded = tmp.replace(REG_HEX, function(match, group1){
         var num = parseInt(group1, 16)
+        buildMeaning[count] = decodeURI(element.solution.niceGloss)
         if(!build.includes(String.fromCharCode(num).substring(9))){
           build[count] = build[count] + String.fromCharCode(num)
         }
@@ -85,10 +88,11 @@ function getRoot(word){
       build[count] = build[count].substring(9)
       count = count + 1
     })
+    console.log(buildMeaning)
     build = removeDuplicates(build)
-    resolve(build)
+    resolve(JSON.stringify({"build" : build, "buildMeaning" : buildMeaning}))
+    })
   })
-})
 }
 function getMeaningRoot(word){
   return new Promise(resolve => {
@@ -117,12 +121,14 @@ function getMeaningRoot(word){
         return data.text()
       }).then(function (html){
         var dom = new jsdom.JSDOM(html)
-        var meaning = dom.window.document.querySelector("ol").textContent
-        var adding = ""
-        var otherWords = dom.window.document.querySelectorAll("ul")
-        console.log(otherWords[3].textContent)
-        for(var i = 3; i < otherWords.length - 14; i++){
-          adding = adding + otherWords[i].textContent
+        var meaning, adding, otherWords = ""
+        if(dom.window.document.querySelector("ol")){
+          meaning = meaning + dom.window.document.querySelector("ol").textContent
+          otherWords = dom.window.document.querySelectorAll("ul")
+          console.log(otherWords[3].textContent)
+          for(var i = 3; i < otherWords.length - 14; i++){
+            adding = adding + otherWords[i].textContent
+          }
         }
         console.log(adding)
         var jsonMeaning = JSON.stringify({"meaning": meaning, "words": adding})
@@ -164,22 +170,29 @@ app.post('/submitArabic', function (req, res, next) {
     recvData = JSON.parse(dataStream)
     var root = []
     root = await getRoot(recvData.data)
-    try{
-      var search = Array.from(root[0])
+    var roots = JSON.parse(root).build
+    console.log("ROOT--------- " + roots)
+    var rootMeaning = ""
+    console.log(search != [])
+    if(search != []){
+      try{
+        var search = Array.from(roots[0])
+        rootMeaning = await getMeaningRoot(search)
+      }
+      catch(e){
+        console.log("no root meaning")
+      }
     }
-    catch(e){
-      console.log(e)
-      var search = []
-    }
-    var rootMeaning = await getMeaningRoot(search)
+    console.log("ROOT MEANING--------- " + rootMeaning)
     var wordMeaning = await getMeaning(recvData.data)
+    console.log("WORD MEANING--------- " + wordMeaning)
     var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning, "word": recvData.data})
     res.status(200)
     res.json(sending)
   })
 })
 
-//TODO: Fix this method to include the helpers
+//TODO: Fix this method to include the helpers once error handled
 app.post('/submit', upload.single('Img'), function (req, res) {  
   var filePath = req.file.path
   const pythonProcess = spawn('python3',["ArabicImage.py", filePath]);
@@ -244,5 +257,11 @@ app.post('/submit', upload.single('Img'), function (req, res) {
   });
 })
 
-//starting the application - see README.md for details on how to start the program
+//starting the app
 app.listen(port, () => console.log(`App listening on port ${port}!`));
+
+//testing
+// تأكل -- breaks
+// اختبار -- works
+// رسم -- breaks
+//
