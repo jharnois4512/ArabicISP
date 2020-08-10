@@ -40,6 +40,9 @@ app.get('/arabic', function (req, res) {
 app.get('/about', function (req, res) {
   res.sendFile('views/about.html', { root: '.' })
 })
+app.get('/readme', function (req, res) {
+  res.sendFile('README.md', { root: '.' })
+})
 /*CSS*/
 app.get('/indexCSS', function (req, res) {
   res.sendFile('CSS/index.css', { root: '.' })
@@ -278,6 +281,10 @@ app.post('/submit', upload.single('Img'), function (req, res) {
           })
       })
   });
+})
+
+app.post('/submitError', function (req, res) { 
+
 })
 
 //starting the app

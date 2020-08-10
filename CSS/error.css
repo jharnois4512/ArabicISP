@@ -31,10 +31,6 @@
     margin-top: -10px;
   }
 
-  div,p {
-    font-size: 10px;
-  }
-
   ul {
     list-style-type: none;
     margin-top: 9px;
@@ -46,6 +42,7 @@
   
   li {
     float: right;
+    overflow: hidden;
   }
   
   li a {
@@ -58,7 +55,6 @@
   }
   
   li a:hover {
-    font-size: 18px;
     font-weight: bold;
   }
   

@@ -8,11 +8,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <!--css stylesheet-->
-  <link rel="stylesheet" type="text/css" href="indexCSS">
+  <link rel="stylesheet" type="text/css" href="errorCSS">
 </head>
 <body style="background-color: #E2002B;">
   <div style="width: 96%; margin-left: 2%;">
-    <div id="header">
+    <div id="header" style="border-bottom: black 1px solid;">
       <div style="float: left; margin-top: 2px;">
         <a href="https://www.wpi.edu" style="margin-left: 380px;">
           <img src="circle" id="circle"/>
@@ -32,16 +32,25 @@
         </ul>
       </div>
     </div>
-    <div>
       <div id="body">
-        <div style="margin: auto; width: 50%;">
-          <div style="margin: auto; width: 25%;">
-            <img src="moroccoGIF" style="margin-left: auto; margin: auto;"/>
-          </div>
+        <div>
+          <p style="font-size: 20px; text-align: center;"><br>Report an issue</p>
         </div>
-        <form action="arabic">
-          <input type="submit" />
-        </form>      
+        <div id="errorForm">
+          <form action="submitError" method="POST" enctype="multipart/form-data" id="errorForm">
+            <p>Thank you for taking the time to report any issues that you may come across while using the application</p>
+            <label for="errorMsg">Was there an error message you experienced?</label>
+            <input type="text" id="errorMsg" name="errMsg" placeholder="Error message...">
+            <br>
+            <label for="fileName">Please upload an image if applicable</label>
+            <input type="file" name="fName" id="fileName">
+            <br>
+            <label for="desc">Please describe the error you experienced</label>
+            <textarea form="errorForm" name="descTxt" id="desc" placeholder="Enter information..."></textarea>
+            <br>
+            <input type="submit" value="Submit" onclick="submitErr(); return false">
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -55,6 +64,5 @@
     <div style="float: right; margin-right: 400px;">
       <p style="font-size: 18px; margin-top: 60px;"><b>Contact the department</b><br>508-831-5246<br>huaweb@wpi.edu</p>
     </div>
-  </div>
 </body>
 </html>
