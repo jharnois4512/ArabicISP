@@ -76,6 +76,9 @@ app.get('/favicon.ico', function (req, res) {
 app.get('/MoroccoGIF', function (req, res) {
   res.sendFile('resources/Morocco.gif', { root: '.' })
 })
+app.get('/circle', function (req, res) {
+  res.sendFile('resources/wpiCircle.png', { root: '.' })
+})
 
 //helper methods for post routes
 function removeDuplicates(array) {
