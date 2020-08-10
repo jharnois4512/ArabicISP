@@ -1,0 +1,34 @@
+#name {
+    width: 100px;
+    height: 20px;
+    background-color: lightgrey;
+    animation: move 2s infinite;
+  }
+  
+  #body {
+    background-image: url("moroccoGIF");
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position: fixed;
+    background-size: 40%;
+    background-color: #ffffff;
+    height: 700px;
+  }
+  
+  #footer {
+    background-color: #C7C5C5;
+    height: 100px;
+  }
+
+  #header {
+    background-color: #F4FAEA;
+  }
+
+  div,p {
+    font-size: 10px;
+  }
+  
+  @keyframes move {
+    from { margin-left: 0px; }
+    to { margin-left: 100px; }
+  }

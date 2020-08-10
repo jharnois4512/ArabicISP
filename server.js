@@ -29,10 +29,29 @@ var upload = multer({ storage: storage })
 //GET methods
 /*views*/
 app.get('/', function (req, res) {
-  res.sendFile('views/Arabic.html', { root: '.' })
+  res.sendFile('views/index.html', { root: '.' })
 })
 app.get('/error', function (req, res) {
   res.sendFile('views/error.html', { root: '.' })
+})
+app.get('/arabic', function (req, res) {
+  res.sendFile('views/arabic.html', { root: '.' })
+})
+app.get('/about', function (req, res) {
+  res.sendFile('views/about.html', { root: '.' })
+})
+/*CSS*/
+app.get('/indexCSS', function (req, res) {
+  res.sendFile('CSS/index.css', { root: '.' })
+})
+app.get('/arabicCSS', function (req, res) {
+  res.sendFile('CSS/arabic.css', { root: '.' })
+})
+app.get('/aboutCSS', function (req, res) {
+  res.sendFile('CSS/about.css', { root: '.' })
+})
+app.get('/errorCSS', function (req, res) {
+  res.sendFile('CSS/error.css', { root: '.' })
 })
 /*js files*/
 app.get('/api', function (req, res) {
@@ -54,14 +73,15 @@ app.get('/wpi', function (req, res) {
 app.get('/favicon.ico', function (req, res) {
   res.sendFile('resources/Morocco.ico', { root: '.' })
 })
+app.get('/MoroccoGIF', function (req, res) {
+  res.sendFile('resources/Morocco.gif', { root: '.' })
+})
 
 //helper methods for post routes
- 
 function removeDuplicates(array) {
   return array.filter((a, b) => array.indexOf(a) === b)
 }
 
-//TODO: handle errors with methods
 function getRoot(word){
   return new Promise(resolve => {
   var arabic = encodeURI(word)
