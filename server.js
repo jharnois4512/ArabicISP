@@ -38,9 +38,6 @@ app.get('/error', function (req, res) {
 app.get('/arabic', function (req, res) {
   res.sendFile('views/arabic.html', { root: '.' })
 })
-app.get('/about', function (req, res) {
-  res.sendFile('views/about.html', { root: '.' })
-})
 app.get('/readme', function (req, res) {
   res.sendFile('README.md', { root: '.' })
 })
@@ -50,9 +47,6 @@ app.get('/indexCSS', function (req, res) {
 })
 app.get('/arabicCSS', function (req, res) {
   res.sendFile('CSS/arabic.css', { root: '.' })
-})
-app.get('/aboutCSS', function (req, res) {
-  res.sendFile('CSS/about.css', { root: '.' })
 })
 app.get('/errorCSS', function (req, res) {
   res.sendFile('CSS/error.css', { root: '.' })
