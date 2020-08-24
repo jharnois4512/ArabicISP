@@ -36,9 +36,9 @@
         <div>
           <p style="font-size: 20px; text-align: center;"><br>Report an issue</p>
         </div>
-        <div id="errorForm">
-          <form action="submitError" method="POST" enctype="multipart/form-data" id="errorForm">
-            <p>Thank you for taking the time to report any issues that you may come across while using the application</p>
+        <div id="errorForm" style="border-top: black 1px solid;">
+          <form action="/submitError" method="POST" enctype="multipart/form-data" id="errorForm">
+            <br><p>Thank you for taking the time to report any issues that you may come across while using the application</p>
             <label for="errorMsg">Was there an error message you experienced?</label>
             <input type="text" id="errorMsg" name="errMsg" placeholder="Error message...">
             <br>
@@ -64,5 +64,6 @@
     <div style="float: right; margin-right: 400px;">
       <p style="font-size: 18px; margin-top: 60px;"><b>Contact the department</b><br>508-831-5246<br>huaweb@wpi.edu</p>
     </div>
+  </div>
 </body>
 </html>

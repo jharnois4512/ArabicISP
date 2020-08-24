@@ -4,6 +4,7 @@ const app = express();
 const multer = require('multer');
 const jsdom = require("jsdom");
 const fetch = require("node-fetch");
+const dataStore = require("nedb");
 const port = 7000
 const spawn = require("child_process").spawn;
 const morgan = require('morgan')
@@ -168,7 +169,7 @@ function getMeaning(word){
     var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=8a6c556d.5f2c6434.0a1ac5af.2d-0-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
     var thirdSending = new URLSearchParams({
       'text': encodeURI(word),
-      'options': '4'
+      'op tions': '4'
     })
     console.log(urlThird)
     fetch(urlThird, {
@@ -284,7 +285,11 @@ app.post('/submit', upload.single('Img'), function (req, res) {
 })
 
 app.post('/submitError', function (req, res) { 
+  var db = new dataStore({filename: "./myDB", autoload: true})
+  console.log(req.body)
+  // db.insert(req, function(){
 
+  // })
 })
 
 //starting the app
