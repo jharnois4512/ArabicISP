@@ -160,10 +160,10 @@ function getMeaningRoot(word){
 
 function getMeaning(word){
   return new Promise(resolve => {
-    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=8a6c556d.5f2c6434.0a1ac5af.2d-0-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
+    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=c4b81007.5f8f348c.b538835a.74722d74657874-1-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
     var thirdSending = new URLSearchParams({
       'text': encodeURI(word),
-      'op tions': '4'
+      'options': '4'
     })
     console.log(urlThird)
     fetch(urlThird, {
@@ -216,7 +216,7 @@ app.post('/submitArabic', function (req, res, next) {
 //TODO: Fix this method to include the helpers once error handled
 app.post('/submit', upload.single('Img'), function (req, res) {  
   var filePath = req.file.path
-  const pythonProcess = spawn('python3',["ArabicImage.py", filePath]);
+  const pythonProcess = spawn('python',["ArabicImage.py", filePath]);
   pythonProcess.stdout.on('data', (data) => {
     var recvString = data.toString()
     console.log(recvString.substr(0, recvString.indexOf('\n')))
@@ -278,12 +278,24 @@ app.post('/submit', upload.single('Img'), function (req, res) {
   });
 })
 
-app.post('/submitError', function (req, res) { 
-  var db = new dataStore({filename: "./myDB", autoload: true})
-  console.log(req.body)
-  // db.insert(req, function(){
+var errorUpload = multer({ dest: 'error/' })
+var errStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'new')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now())
+  }
+})
+var errorUpload = multer({ storage: errStorage })
 
-  // })
+app.post('/submitError', function (req, res) { 
+  // var filePath = req.file.path
+  // console.log(filePath)
+  console.log("Inside")
+})
+app.post('/submitErrorTwo', function (req, res){
+  console.log("works")
 })
 
 //starting the app

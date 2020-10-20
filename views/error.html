@@ -1,69 +1,99 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Welcome - Arabic Root Dictionary</title>
-  <!--bootstrap-->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <!--css stylesheet-->
-  <link rel="stylesheet" type="text/css" href="errorCSS">
-</head>
-<body style="background-color: #E2002B;">
-  <div style="width: 96%; margin-left: 2%;">
-    <div id="header" style="border-bottom: black 1px solid;">
-      <div style="float: left; margin-top: 2px;">
-        <a href="https://www.wpi.edu" style="margin-left: 380px;">
-          <img src="circle" id="circle"/>
-        </a>
-      </div>
-      <div style="float: left;"> 
-        <p style="font-size: 28px; margin-top: 13px; margin-left: 150px;">
-          <b>Arabic Root Dictionary</b>
-        </p>
-      </div>
-      <div style="float: right;">
-        <ul>
-          <li><a href="error">Report an Error</a></li>
-          <li><a href="https://wp.wpi.edu/morocco/">About</a></li>
-          <li><a href="arabic">Get Started</a></li>
-          <li><a href="/">Home</a></li>
-        </ul>
-      </div>
-    </div>
-      <div id="body">
-        <div>
-          <p style="font-size: 20px; text-align: center;"><br>Report an issue</p>
+  <head>
+    <title>Welcome - Arabic Root Dictionary</title>
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!--css stylesheet-->
+    <link rel="stylesheet" type="text/css" href="errorCSS">
+  </head>
+  <body style="background-color: #E2002B;">
+    <div style="width: 96%; margin-left: 2%;">
+      <div id="header" style="border-bottom: black 1px solid;">
+        <div style="float: left; margin-top: 2px;">
+          <a href="https://www.wpi.edu" style="margin-left: 380px;">
+            <img src="circle" id="circle"/>
+          </a>
         </div>
-        <div id="errorForm" style="border-top: black 1px solid;">
-          <form action="/submitError" method="POST" enctype="multipart/form-data" id="errorForm">
-            <br><p>Thank you for taking the time to report any issues that you may come across while using the application</p>
-            <label for="errorMsg">Was there an error message you experienced?</label>
-            <input type="text" id="errorMsg" name="errMsg" placeholder="Error message...">
-            <br>
-            <label for="fileName">Please upload an image if applicable</label>
-            <input type="file" name="fName" id="fileName">
-            <br>
-            <label for="desc">Please describe the error you experienced</label>
-            <textarea form="errorForm" name="descTxt" id="desc" placeholder="Enter information..."></textarea>
-            <br>
-            <input type="submit" value="Submit" onclick="submitErr(); return false">
-          </form>
+        <div style="float: left;"> 
+          <p style="font-size: 28px; margin-top: 13px; margin-left: 150px;">
+            <b>Arabic Root Dictionary</b>
+          </p>
+        </div>
+        <div style="float: right;">
+          <ul>
+            <li><a href="error">Report an Error</a></li>
+            <li><a href="https://wp.wpi.edu/morocco/">About</a></li>
+            <li><a href="/">Home</a></li>
+          </ul>
         </div>
       </div>
+        <div id="body">
+          <div>
+            <p style="font-size: 20px; text-align: center;"><br>Report an issue</p>
+          </div>
+          <div id="errorForm" style="border-top: black 1px solid;">
+            <form action="submitError" method="POST" enctype="multipart/form-data" id="errorForm">
+              <br><p><strong>Thank you for taking the time to report any issues that you may come across while using the application</strong></p>
+              <label for="errorMsg"><strong>1. Was there an error message you experienced?</strong></label>
+              <input type="text" id="errorMsg" name="errMsg" placeholder="Error message..." style="width: 50%; margin-left: 15%;">
+              <br>
+              <label for="fileName"><strong>2. Please upload an image if applicable</strong></label>
+              <input type="file" name="fName" id="fileName" style="margin-left: 19%;">
+              <br>
+              <label for="desc"><strong>3. Please describe the error you experienced</strong></label>
+              <textarea form="errorForm" name="descTxt" id="desc" placeholder="Enter information..." style="width: 50%; margin-left: 17%; height: 30%;"></textarea>
+              <br>
+              <input type="submit" class="btn btn-success" value="Submit" onclick="submitErr(); return false" style="margin-left: 83%; margin-bottom: 5rem; width: 7%; height: 3rem;">
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div id="footer">
-    <div style="float: left; width: 30%; margin-left: 350px;">
-      <img src="wpi" id="logo" />
+    <div id="footer">
+      <div style="float: left; width: 30%; margin-left: 350px;">
+        <img src="wpi" id="logo" />
+      </div>
+      <div style="float: left; margin-left: -100px;">
+        <p style="font-size: 18px; margin-top: 60px;"><b>WPI Humanities & Arts Department</b><br>Arabic Program<br>Moroccan Project Center</p>
+      </div>
+      <div style="float: right; margin-right: 400px;">
+        <p style="font-size: 18px; margin-top: 60px;"><b>Contact the department</b><br>508-831-5246<br>huaweb@wpi.edu</p>
+      </div>
     </div>
-    <div style="float: left; margin-left: -100px;">
-      <p style="font-size: 18px; margin-top: 60px;"><b>WPI Humanities & Arts Department</b><br>Arabic Program<br>Moroccan Project Center</p>
-    </div>
-    <div style="float: right; margin-right: 400px;">
-      <p style="font-size: 18px; margin-top: 60px;"><b>Contact the department</b><br>508-831-5246<br>huaweb@wpi.edu</p>
-    </div>
-  </div>
-</body>
+  </body>
+  <script>
+    function submitErr(){
+      console.log("EHRKEJRKLJALKDAS")
+      var first = document.getElementById("errorMsg").value 
+      var second = document.getElementById("fileName").value 
+      var third = document.getElementById("desc").value 
+      var jsonform = {firstdData: first, secondData = second, thirdData = third}
+      // var jsonObj = JSON.stringify(jsonform)
+      // console.log(jsonObj)
+      // $.ajax({
+      //   type: "POST",
+      //   url: "submitError",
+      //   data: jsonObj,
+      //   dataType: "json",
+      //   contentType: "application/json; charset=utf-8",
+      //   success: function(res){
+      //     alert("Successfully added!")
+      //   }
+      // })
+      // $.ajax({
+      //   type: "POST",
+      //   url: "submitErrorTwo",
+      //   data: jsonObj,
+      //   dataType: "json",
+      //   contentType: "application/json; charset=utf-8",
+      //   success: function(res){
+      //     alert("Successfully added!")
+      //   }
+      // })
+    }
+  </script>
 </html>

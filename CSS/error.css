@@ -7,7 +7,7 @@
   
   #body {
     background-color: #ffffff; 
-    height: 875px;
+    height: 700px;
   }
   
   #footer {
@@ -56,6 +56,24 @@
   
   li a:hover {
     font-weight: bold;
+  }
+
+  form {
+    background-color: lightcoral;
+    width: 90%;
+    margin-left: 5%;
+  }
+
+  form p {
+    /* margin-top: 2rem;
+    margin-bottom: 3rem; */
+    margin-left: 25%;
+  }
+
+  form label {
+    margin-top: 3rem;
+    margin-bottom: 5rem;
+    margin-left: 2rem;
   }
   
   @keyframes move {
