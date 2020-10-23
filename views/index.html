@@ -42,7 +42,7 @@
               <img src="moroccoGIF" style="margin-left: auto; margin: auto;"/>
             </div>
           </div>
-          <div style="margin-left: 45%;">
+          <div style="margin-left: 45%;" id="formDiv">
             <div>
               <p style="margin-left: -10%; font-size: 36px;">Submit transliteration!</p>
             </div>
@@ -93,8 +93,8 @@
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function(res){
-          $("body").html(res);
           //TODO: Error handle the stuff that I fixed in the back end
+          var replace = document.getElementById("formDiv")
           var frontJSON = {}
           frontJSON.wordArr = []
           var results = JSON.parse(res)
@@ -109,8 +109,46 @@
               frontJSON.wordArr.push(obj)
             }
           })
-          console.log(frontJSON)
-          $("body").html(frontJSON.root); 
+          // replace.replaceWith(frontJSON[ents]);
+          var div = document.createElement("div")
+          var divOne = document.createElement("div")
+          var divTwo = document.createElement("div")
+          var divThree = document.createElement("div")
+          var divFour = document.createElement("div")
+          var divFive = document.createElement("div")
+          var newLine = document.createElement("br")
+          var word = document.createTextNode(frontJSON.word)
+          var table = document.createElement("table")
+          var tblBody = document.createElement("tbody")
+          for(let items in frontJSON.wordArr){
+            var row = document.createElement("tr")
+            var col = document.createElement("td")
+            var words = document.createTextNode(frontJSON.wordArr[items])
+            col.append(words)
+            row.append(col)
+            tblBody.append(row)
+          }
+          table.append(tblBody)
+          divOne.style.cssText = "text-align:center;"
+          divOne.style.fontSize = "x-large"
+          divTwo.style.cssText = "overflow:scroll"
+          var meaningRoot = document.createTextNode(frontJSON.rootMeaning)
+          var rootAppend = document.createTextNode(frontJSON.root)
+          var meaningWord = document.createTextNode(frontJSON.wordMeaning)
+          divOne.append(word)
+          divTwo.append(table)
+          divThree.append(meaningRoot)
+          divFour.append(rootAppend)
+          divFive.append(meaningWord)
+          div.append(divOne)
+          div.append(divTwo)
+          div.append(divThree)
+          div.append(divFour)
+          div.append(divFive)
+          for(var i = 0; i < frontJSON.word.length; i++){
+            console.log(frontJSON.word[i])
+          }
+          replace.replaceWith(div);
         }
       })
     }
