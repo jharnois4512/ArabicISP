@@ -64,17 +64,31 @@
             var meaningWord = document.createTextNode(frontJSON.wordMeaning)
             var divFiveIn = document.createTextNode("Translation of this word: ")
             // starting the color coding of the word
-            // for(var i = 0; i < frontJSON.word.length; i++){
-            //   for(var r = 0; r < frontJSON.root[0].length; r++){
-            //     if(frontJSON.word[i] === frontJSON.root[0][r]){
-            //       console.log(frontJSON.root[0][r])
-            //     }
-            //     if{
-            //       console.log(frontJSON.word[i])
-            //     }
-            //   }
-            // }
-          
+            var colorHolder = []
+            console.log(colorHolder)
+            for(var i = frontJSON.word.length - 1; i > -1; i--){
+              for(var r = frontJSON.root[0].length - 1 ; r > -1; r--){
+                if(frontJSON.word[i] === frontJSON.root[0][r]){
+                  console.log(frontJSON.root[0][r], i)
+                  colorHolder[i] = 1
+                  break
+                }
+                else{
+                  colorHolder[i] = 0
+                }
+              }
+            }
+            for(let slots in colorHolder){
+              if(colorHolder[slots] === 1){
+                console.log(frontJSON.word[slots])
+                divOne.innerHTML += "<span style='color:red'>" + frontJSON.word[slots] + "</span>"
+              }
+              else{
+                console.log(frontJSON.word[slots])
+                divOne.innerHTML += "<span>" + frontJSON.word[slots] + "</span>"
+              }
+            }
+            
             //css 
             divOne.style.cssText = "text-align:center;"
             divOne.style.fontSize = "x-large"
@@ -86,8 +100,7 @@
             buttonDir.className = "btn btn-primary"
            
             //appending all of the text variables into their respective divs
-            // divOne.append()
-            // divTwo.append()
+            divTwo.append(table)
             divThree.append(meaningRoot)
             divFour.append(rootAppend)
             divFive.append(divFiveIn)
