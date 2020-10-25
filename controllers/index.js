@@ -25,14 +25,20 @@
             console.log(results)
             frontJSON.root = JSON.parse(results.root).build
             frontJSON.rootMeaning = JSON.parse(results.root).buildMeaning
-            var wordArr = JSON.parse(results.rootMeaning).words.split("\n")
+            if(results.rootMeaning.words){
+              var wordArr = JSON.parse(results.rootMeaning).words.split("\n")
+              wordArr.forEach(function(obj){
+                if(obj.includes("(")){
+                  frontJSON.wordArr.push(obj)
+                }
+              })
+            }
+            else{
+              var wordArr = ""
+              frontJSON.wordArr = wordArr
+            }
             frontJSON.wordMeaning = JSON.parse(results.wordMeaning).text[0]
             frontJSON.word = results.word
-            wordArr.forEach(function(obj){
-              if(obj.includes("(")){
-                frontJSON.wordArr.push(obj)
-              }
-            })
             //main div to hold everything
             var div = document.createElement("div")
             //five divs for the contents 
@@ -47,16 +53,24 @@
             var table = document.createElement("table")
             var tblBody = document.createElement("tbody")
             //for loop though the different words for the table 
-            for(let items in frontJSON.wordArr){
-              if(frontJSON.wordArr[items].includes("Form"))
-              var row = document.createElement("tr")
-              var col = document.createElement("td")
-              var words = document.createTextNode(frontJSON.wordArr[items])
-              col.append(words)
-              row.append(col)
-              tblBody.append(row)
+            console.log(frontJSON.wordArr)
+            if(frontJSON.wordArr.length){
+              for(let items in frontJSON.wordArr){
+                if(frontJSON.wordArr[items].includes("Form"))
+                var row = document.createElement("tr")
+                var col = document.createElement("td")
+                var words = document.createTextNode(frontJSON.wordArr[items])
+                col.append(words)
+                row.append(col)
+                tblBody.append(row)
+              }
+              table.append(tblBody)
+              divTwo.append(table)
             }
-            table.append(tblBody)
+            else{
+              var errorMsg = document.createTextNode("We're sorry! No alternative word forms were found for this word.")
+              divTwo.append(errorMsg)
+            }
   
             //creating all of the text variables
             var meaningRoot = document.createTextNode(frontJSON.rootMeaning)
@@ -65,11 +79,9 @@
             var divFiveIn = document.createTextNode("Translation of this word: ")
             // starting the color coding of the word
             var colorHolder = []
-            console.log(colorHolder)
             for(var i = frontJSON.word.length - 1; i > -1; i--){
               for(var r = frontJSON.root[0].length - 1 ; r > -1; r--){
                 if(frontJSON.word[i] === frontJSON.root[0][r]){
-                  console.log(frontJSON.root[0][r], i)
                   colorHolder[i] = 1
                   break
                 }
@@ -80,11 +92,9 @@
             }
             for(let slots in colorHolder){
               if(colorHolder[slots] === 1){
-                console.log(frontJSON.word[slots])
                 divOne.innerHTML += "<span style='color:red'>" + frontJSON.word[slots] + "</span>"
               }
               else{
-                console.log(frontJSON.word[slots])
                 divOne.innerHTML += "<span>" + frontJSON.word[slots] + "</span>"
               }
             }
@@ -100,7 +110,6 @@
             buttonDir.className = "btn btn-primary"
            
             //appending all of the text variables into their respective divs
-            divTwo.append(table)
             divThree.append(meaningRoot)
             divFour.append(rootAppend)
             divFive.append(divFiveIn)

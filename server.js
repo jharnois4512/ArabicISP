@@ -196,13 +196,8 @@ app.post('/submitArabic', function (req, res, next) {
     var rootMeaning = ""
     console.log(search != [])
     if(search != []){
-      try{
-        var search = Array.from(roots[0])
-        rootMeaning = await getMeaningRoot(search)
-      }
-      catch(e){
-        console.log("no root meaning")
-      }
+      var search = Array.from(roots[0])
+      rootMeaning = await getMeaningRoot(search)
     }
     console.log("ROOT MEANING--------- " + rootMeaning)
     var wordMeaning = await getMeaning(recvData.data)
