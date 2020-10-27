@@ -15,8 +15,6 @@ to start running the program
 Any errors that you find with the program please contact:
 Jeffrey Harnois - (jharnois@wpi.edu) or professor (Mohammed El Hamzaoui) - melhamzaoui@wpi.edu
 
-You can always goto /error to report an error as well.
-
 
 
 
