@@ -58,20 +58,51 @@
             // console.log(frontJSON.wordArr)
             if(frontJSON.wordArr.length){
               for(let items in frontJSON.wordArr){
-                if(frontJSON.wordArr[items].includes("Form"))
-                var row = document.createElement("tr")
-                var col = document.createElement("td")
-                var words = document.createTextNode(frontJSON.wordArr[items])
-                col.append(words)
-                row.append(col)
-                tblBody.append(row)
-              }
-              table.append(tblBody)
-              divTwo.append(table)
+                if(items == 0){
+                  var firstDiv = document.createElement("div")
+                  var firstMatch = document.createElement("p")
+                  var matchText = document.createTextNode(frontJSON.wordArr[items])
+                  firstMatch.append(matchText)
+                  firstDiv.append(firstMatch)
+                  divTwo.append(firstDiv)
+                }
+                else{
+                  var tableDiv = document.createElement("div")
+                  if(frontJSON.wordArr[items].includes("Form")){
+                    var row = document.createElement("tr")
+                    var col = document.createElement("td")
+                    var words = document.createTextNode(frontJSON.wordArr[items])
+                    col.append(words)
+                    row.append(col)
+                    tblBody.append(row)
+                  }
+                  else if(frontJSON.wordArr[items].includes("\")") && !frontJSON.wordArr[items].includes("Form")){
+                    var secondDiv = document.createElement("div")
+                    var secondMatch = document.createElement("p")
+                    var secondMatchText = document.createTextNode(frontJSON.wordArr[items])
+                    secondMatch.append(secondMatchText)
+                    secondDiv.append(secondMatch)
+                    divTwo.append(secondDiv)
+                  }
+                  else{
+                    var row = document.createElement("tr")
+                    var col = document.createElement("td")
+                    var words = document.createTextNode(frontJSON.wordArr[items])
+                    col.append(words)
+                    row.append(col)
+                    tblBody.append(row)
+                  }
+                }
+                // table.append(tblBody)
+                // tableDiv.append(table)
+                // divTwo.append(tableDiv)
+                }
             }
             else{
               var errorMsg = document.createTextNode("We're sorry! No alternative word forms were found for this word.")
               divTwo.append(errorMsg)
+              divTwo.style.cssText = "text-align:center;" 
+              divTwo.style.fontSize = "large"
             }
   
             //creating all of the text variables

@@ -89,7 +89,7 @@ function getRoot(word){
   const urlStart = "http://www.aratools.com/dict-service?query={%22dictionary%22:%22AR-EN-WORD-DICTIONARY%22,%22word%22:%22"
   const urlEnd = "%22,%22dfilter%22:true}&format=json&_=1596542079034"
   var urlSend = urlStart + arabic + urlEnd
-  console.log(urlSend)
+  // console.log(urlSend)
   var REG_HEX = /&#x([a-fA-F0-9]+);/g;
   var build = []
   var buildMeaning = []
@@ -97,7 +97,7 @@ function getRoot(word){
   fetch(urlSend).then(res => res.json()).then(data => {
     var roots = data.result.length
     data.result.forEach(element => {
-      console.log(element)
+      // console.log(element)
       var tmp = decodeURI(element.solution.root)
       var decoded = tmp.replace(REG_HEX, function(match, group1){
         var num = parseInt(group1, 16)
@@ -109,7 +109,7 @@ function getRoot(word){
       build[count] = build[count].substring(9)
       count = count + 1
     })
-    console.log(buildMeaning)
+    // console.log(buildMeaning)
     build = removeDuplicates(build)
     resolve(JSON.stringify({"build" : build, "buildMeaning" : buildMeaning}))
     })
@@ -132,7 +132,7 @@ function getMeaningRoot(word){
         }
     }
     var newURL = newStart + newArabic + newEnd
-    console.log(newURL)
+    // console.log(newURL)
     fetch(newURL, {
       method: 'GET',
       headers: {
@@ -142,16 +142,27 @@ function getMeaningRoot(word){
         return data.text()
       }).then(function (html){
         var dom = new jsdom.JSDOM(html)
-        var meaning, adding, otherWords = ""
-        if(dom.window.document.querySelector("ol")){
-          meaning = meaning + dom.window.document.querySelector("ol").textContent
-          otherWords = dom.window.document.querySelectorAll("ul")
-          console.log(otherWords[3].textContent)
-          for(var i = 3; i < otherWords.length - 14; i++){
-            adding = adding + otherWords[i].textContent
+        var meaning =  ""
+        var adding = ""
+        var el = dom.window.document.createElement("html")
+        textDiv = dom.window.document.querySelector('#mw-content-text').textContent
+        el.innerHTML = textDiv
+        // if(dom.window.document.querySelector("ol")){
+        //   meaning = meaning + dom.window.document.querySelector("ol").textContent
+        //   otherWords = dom.window.document.querySelectorAll("ul")
+        //   console.log(otherWords[3].textContent)
+        //   for(var i = 3; i < otherWords.length - 14; i++){
+        //     adding = adding + otherWords[i].textContent
+        //   }
+        // }
+        for(let line in el.innerHTML.split("\n")){
+          if(el.innerHTML.split("\n")[line].charAt(el.innerHTML.split("\n")[line].length - 1) === ')' || el.innerHTML.split("\n")[line].indexOf('[') !== -1 &&  el.innerHTML.split("\n")[line].indexOf('edit') === -1){
+            adding = adding + el.innerHTML.split("\n")[line] + "\n"
+            // console.log(el.innerHTML.split("\n")[line])
           }
         }
         console.log(adding)
+        
         var jsonMeaning = JSON.stringify({"meaning": meaning, "words": adding})
         resolve(jsonMeaning)
       })
@@ -160,12 +171,12 @@ function getMeaningRoot(word){
 
 function getMeaning(word){
   return new Promise(resolve => {
-    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=c4b81007.5f8f348c.b538835a.74722d74657874-1-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
+    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=6d18d39c.5f98721a.9a1ae096.74722d74657874-2-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
     var thirdSending = new URLSearchParams({
       'text': encodeURI(word),
       'options': '4'
     })
-    console.log(urlThird)
+    // console.log(urlThird)
     fetch(urlThird, {
       method: 'POST',
       headers: {
@@ -192,16 +203,16 @@ app.post('/submitArabic', function (req, res, next) {
     var root = []
     root = await getRoot(recvData.data)
     var roots = JSON.parse(root).build
-    console.log("ROOT--------- " + roots)
+    // console.log("ROOT--------- " + roots)
     var rootMeaning = ""
-    console.log(search != [])
+    // console.log(search != [])
     if(search != []){
       var search = Array.from(roots[0])
       rootMeaning = await getMeaningRoot(search)
     }
-    console.log("ROOT MEANING--------- " + rootMeaning)
+    // console.log("ROOT MEANING--------- " + rootMeaning)
     var wordMeaning = await getMeaning(recvData.data)
-    console.log("WORD MEANING--------- " + wordMeaning)
+    // console.log("WORD MEANING--------- " + wordMeaning)
     var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning, "word": recvData.data})
     res.status(200)
     res.json(sending)
@@ -263,6 +274,7 @@ app.post('/submit', upload.single('Img'), function (req, res) {
           .then(data => {
             return data.text()
           }).then(function (html){
+            console.log(html, " HEREEEEEEEEEEEEEEEEEEE")
             var dom = new jsdom.JSDOM(html)
             var meaning = dom.window.document.querySelector("ol").textContent
             var sending = JSON.stringify({"meaning": meaning, "roots": build, "word": recvData.data})
