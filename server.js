@@ -132,7 +132,7 @@ function getMeaningRoot(word){
         }
     }
     var newURL = newStart + newArabic + newEnd
-    // console.log(newURL)
+    console.log(newURL)
     fetch(newURL, {
       method: 'GET',
       headers: {
@@ -171,7 +171,7 @@ function getMeaningRoot(word){
 
 function getMeaning(word){
   return new Promise(resolve => {
-    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=6d18d39c.5f98721a.9a1ae096.74722d74657874-2-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
+    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=430e496d.5fa48da4.cdc235e1.74722d74657874-1-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
     var thirdSending = new URLSearchParams({
       'text': encodeURI(word),
       'options': '4'

@@ -6,10 +6,8 @@
       //methods 
       function submitform(){
         var formData = document.getElementById("text").value 
-        // console.log(formData)
         var jsonform = {data: formData}
         var jsonObj = JSON.stringify(jsonform)
-        // console.log(jsonObj)
         $.ajax({
           type: "POST",
           url: "submitArabic",
@@ -17,7 +15,6 @@
           dataType: "json",
           contentType: "application/json; charset=utf-8",
           success: function(res){
-            //TODO: Error handle the stuff that I fixed in the back end
             var replace = document.getElementById("formDiv")
             var replaceTop = document.getElementById("directions")
             var frontJSON = {}
@@ -25,7 +22,6 @@
             var results = JSON.parse(res)
             frontJSON.root = JSON.parse(results.root).build
             frontJSON.rootMeaning = JSON.parse(results.root).buildMeaning
-            // console.log(frontJSON.rootMeaning)
             if(JSON.parse(results.rootMeaning).words){
               var wordArr = JSON.parse(results.rootMeaning).words.split("\n")
               wordArr.forEach(function(obj){
@@ -53,72 +49,132 @@
             var buttonDir = document.createElement("a")
             //elements needed for the table of different words
             var table = document.createElement("table")
+            var verbTable = document.createElement("table")
             var tblBody = document.createElement("tbody")
+            var verbBody = document.createElement("tbody")
+            var rowOne = document.createElement("td")
+            var rowTwo = document.createElement("td")
+            var rowThree = document.createElement("td")
+            var rootTop = document.createElement("tr")
+            var nounTop = document.createElement("tr")
+            var verbTop = document.createElement("tr")
+            var nounTopP = document.createElement("p")
+            var nounTopIn = document.createTextNode("Alternative noun forms found for root:")
+            rootTop.innerHTML = "Root detected"
+            // nounTopP.style.cssText = "margin-left: 3%;"
+            nounTopP.append(nounTopIn)
+            nounTop.append(nounTopP)
+            verbTop.innerHTML = "Alternative verb forms found for root:"
+            rootTop.style.fontSize = "large"
+            nounTopP.style.fontSize = "large"
+            verbTop.style.fontSize = "large"
+            // rowTwo.style.cssText = "margin-left: 3%;"
+            // rowTwo.style.cssText = "width:1%;"
+            rowOne.append(nounTop)
+            rowTwo.append(verbTop)
+            rowThree.append(rootTop)
             //for loop though the different words for the table 
-            // console.log(frontJSON.wordArr)
+            var divTable = document.createElement("div")
+            var divTableThree = document.createElement("div")
+
             if(frontJSON.wordArr.length){
               for(let items in frontJSON.wordArr){
-                if(items == 0){
+                // Nouns
+                if(frontJSON.wordArr[items].includes('”)') && !frontJSON.wordArr[items].includes('Form')){
+                  console.log(frontJSON.wordArr[items])
+                  var colOne = document.createElement("tr")
+                  var nounRowCell = document.createElement("td")
+                  var firstDiv = document.createElement("div")
+                  var firstMatch = document.createElement("p")
+                  firstMatch.style.cssText = "margin-left: 3%;"
+                  var matchText = document.createTextNode(frontJSON.wordArr[items])
+                  colOne.innerHTML = frontJSON.wordArr[items]
+                  // rowOne.append(colOne)
+                  firstMatch.append(matchText)
+                  firstDiv.append(firstMatch)
+                  rowOne.append(firstDiv)
+                  // divTableThree.append(firstDiv)
+                }
+                // Verbs 
+                else if(items > 0){
+                  if(frontJSON.wordArr[items].includes("Form")){
+                    console.log(frontJSON.wordArr[items])
+                    var verbRow = document.createElement("tr")
+                    var verbRowCell = document.createElement("td")
+                    var firstMatch = document.createElement("p")
+                    var matchText = document.createTextNode(frontJSON.wordArr[items])
+                    var firstDiv = document.createElement("div")
+                    firstMatch.append(matchText)
+                    firstDiv.append(firstMatch)
+                    verbRowCell.append(firstDiv)
+                    verbRow.append(verbRowCell)
+                    rowTwo.append(verbRow)
+                  }
+                  else{
+                    var verbRowCell = document.createElement("td")
+                    var firstMatch = document.createElement("p")
+                    var matchText = document.createTextNode(frontJSON.wordArr[items])
+                    var firstDiv = document.createElement("div")
+                    firstMatch.append(matchText)
+                    firstDiv.append(firstMatch)
+                    verbRowCell.append(firstDiv)
+                    verbRow.append(verbRowCell)
+                    rowTwo.append(verbRow)
+                  }
+                }
+                // Chart starter
+                else{
+                  var colThree = document.createElement("tr")
                   var firstDiv = document.createElement("div")
                   var firstMatch = document.createElement("p")
                   var matchText = document.createTextNode(frontJSON.wordArr[items])
+                  colThree.innerHTML = frontJSON.wordArr[items]
+                  rowThree.append(colThree)
                   firstMatch.append(matchText)
                   firstDiv.append(firstMatch)
-                  divTwo.append(firstDiv)
+                  divTable.append(firstDiv)
+                  console.log(matchText)
                 }
-                else{
-                  var tableDiv = document.createElement("div")
-                  if(frontJSON.wordArr[items].includes("Form")){
-                    var row = document.createElement("tr")
-                    var col = document.createElement("td")
-                    var words = document.createTextNode(frontJSON.wordArr[items])
-                    col.append(words)
-                    row.append(col)
-                    tblBody.append(row)
-                  }
-                  else if(frontJSON.wordArr[items].includes("\")") && !frontJSON.wordArr[items].includes("Form")){
-                    var secondDiv = document.createElement("div")
-                    var secondMatch = document.createElement("p")
-                    var secondMatchText = document.createTextNode(frontJSON.wordArr[items])
-                    secondMatch.append(secondMatchText)
-                    secondDiv.append(secondMatch)
-                    divTwo.append(secondDiv)
-                  }
-                  else{
-                    var row = document.createElement("tr")
-                    var col = document.createElement("td")
-                    var words = document.createTextNode(frontJSON.wordArr[items])
-                    col.append(words)
-                    row.append(col)
-                    tblBody.append(row)
-                  }
-                }
-                // table.append(tblBody)
-                // tableDiv.append(table)
-                // divTwo.append(tableDiv)
-                }
+              }
+              //make these into a table
+              tblBody.append(rowThree)
+              tblBody.append(rowOne)
+              tblBody.append(rowTwo)
+              table.append(tblBody)
+              table.style.cssText = "width:100%"
+              divTwo.append(table)
             }
             else{
               var errorMsg = document.createTextNode("We're sorry! No alternative word forms were found for this word.")
-              divTwo.append(errorMsg)
-              divTwo.style.cssText = "text-align:center;" 
-              divTwo.style.fontSize = "large"
+              var errorP = document.createElement('p')
+              errorP.append(errorMsg)
+              divTwo.append(errorP)
+              errorP.style.cssText = "width:100%"
+              errorP.style.cssText = "text-align:center;" 
+              errorP.style.fontSize = 'large'
             }
-  
+
             //creating all of the text variables
             var breakLine = document.createElement("br")
             var topDivReplace = document.createTextNode("")
             var meaningRoot = document.createTextNode(frontJSON.rootMeaning)
+            var rootLabel = document.createTextNode("The root letters of this word are: ")
             var rootAppend = document.createTextNode(frontJSON.root)
             var meaningWord = document.createTextNode(frontJSON.wordMeaning)
             var divFiveIn = document.createTextNode("Translation of this word: ")
             var divThreeIn = document.createTextNode("Translation of this root: ")
+
             // starting the color coding of the word
+            var check = []
+            for(var t = 0; t < frontJSON.root[0].length; t++){
+              check[t] = 0
+            }
             var colorHolder = []
             for(var i = frontJSON.word.length - 1; i > -1; i--){
               for(var r = frontJSON.root[0].length - 1 ; r > -1; r--){
-                if(frontJSON.word[i] === frontJSON.root[0][r]){
+                if(frontJSON.word[i] === frontJSON.root[0][r] && check[r] === 0){
                   colorHolder[i] = 1
+                  check[r] = 1
                   break
                 }
                 else{
@@ -144,6 +200,8 @@
             divFive.style.fontSize = "large"
             divThree.style.cssText = "text-align:center;" 
             divThree.style.fontSize = "large"
+            divTwo.style.cssText = "overflow:scroll;"
+            divTwo.style.cssText = "margin-top:3%"
             buttonDir.style.cssText = "width:5%"
             buttonDir.innerHTML = "Go back"
             buttonDir.href = "/"
@@ -152,6 +210,7 @@
             //appending all of the text variables into their respective divs
             divThree.append(divThreeIn)
             divThree.append(meaningRoot)
+            divFour.append(rootLabel)
             divFour.append(rootAppend)
             divFive.append(divFiveIn)
             divFive.append(meaningWord)
