@@ -8,12 +8,16 @@ const dataStore = require("nedb");
 const port = 7000
 const spawn = require("child_process").spawn;
 const morgan = require('morgan')
+const rimraf = require('rimraf')
+const mkdirp = require('mkdirp')
 
 //for logging http requests
 app.use(morgan('combined'));
 //for JSON reading
 app.use(require('body-parser').urlencoded({ extended: true }));
-
+//for removing all files in new
+rimraf("new", function(){ console.log("removed the `new` folder"); mkdirp("new", function(){ console.log("made the `new` folder again")})})
+console.log("making the 'new' folder again...")
 
 // storing new files from the picture with unique names
 var upload = multer({ dest: 'new/' })
@@ -89,29 +93,41 @@ function getRoot(word){
   const urlStart = "http://www.aratools.com/dict-service?query={%22dictionary%22:%22AR-EN-WORD-DICTIONARY%22,%22word%22:%22"
   const urlEnd = "%22,%22dfilter%22:true}&format=json&_=1596542079034"
   var urlSend = urlStart + arabic + urlEnd
-  // console.log(urlSend)
+  console.log(urlSend)
   var REG_HEX = /&#x([a-fA-F0-9]+);/g;
   var build = []
   var buildMeaning = []
   var count = 0
+  var check = 0
   fetch(urlSend).then(res => res.json()).then(data => {
     var roots = data.result.length
-    data.result.forEach(element => {
-      // console.log(element)
-      var tmp = decodeURI(element.solution.root)
-      var decoded = tmp.replace(REG_HEX, function(match, group1){
-        var num = parseInt(group1, 16)
-        buildMeaning[count] = decodeURI(element.solution.niceGloss)
-        if(!build.includes(String.fromCharCode(num).substring(9))){
-          build[count] = build[count] + String.fromCharCode(num)
-        }
+    if(roots){
+      if(data.result[0].solution.root != ''){
+        check = 1
+      }
+      else{
+        check = 0
+      }
+    }
+    if(check){
+      data.result.forEach(element => {
+        var tmp = decodeURI(element.solution.root)
+        var decoded = tmp.replace(REG_HEX, function(match, group1){
+          var num = parseInt(group1, 16)
+          buildMeaning[count] = decodeURI(element.solution.niceGloss)
+          if(!build.includes(String.fromCharCode(num).substring(9))){
+            build[count] = build[count] + String.fromCharCode(num)
+          }
+        })
+        build[count] = build[count].substring(9)
+        count = count + 1
       })
-      build[count] = build[count].substring(9)
-      count = count + 1
-    })
-    // console.log(buildMeaning)
-    build = removeDuplicates(build)
-    resolve(JSON.stringify({"build" : build, "buildMeaning" : buildMeaning}))
+      build = removeDuplicates(build)
+      resolve(JSON.stringify({"build" : build, "buildMeaning" : buildMeaning}))
+      }
+      else{
+        resolve(JSON.stringify({"build" : "", "buildMeaning" : ""}))
+      }
     })
   })
 }
@@ -147,22 +163,12 @@ function getMeaningRoot(word){
         var el = dom.window.document.createElement("html")
         textDiv = dom.window.document.querySelector('#mw-content-text').textContent
         el.innerHTML = textDiv
-        // if(dom.window.document.querySelector("ol")){
-        //   meaning = meaning + dom.window.document.querySelector("ol").textContent
-        //   otherWords = dom.window.document.querySelectorAll("ul")
-        //   console.log(otherWords[3].textContent)
-        //   for(var i = 3; i < otherWords.length - 14; i++){
-        //     adding = adding + otherWords[i].textContent
-        //   }
-        // }
         for(let line in el.innerHTML.split("\n")){
           if(el.innerHTML.split("\n")[line].charAt(el.innerHTML.split("\n")[line].length - 1) === ')' || el.innerHTML.split("\n")[line].indexOf('[') !== -1 &&  el.innerHTML.split("\n")[line].indexOf('edit') === -1){
             adding = adding + el.innerHTML.split("\n")[line] + "\n"
-            // console.log(el.innerHTML.split("\n")[line])
           }
         }
         console.log(adding)
-        
         var jsonMeaning = JSON.stringify({"meaning": meaning, "words": adding})
         resolve(jsonMeaning)
       })
@@ -171,12 +177,11 @@ function getMeaningRoot(word){
 
 function getMeaning(word){
   return new Promise(resolve => {
-    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=430e496d.5fa48da4.cdc235e1.74722d74657874-1-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
+    var urlThird = "https://translate.yandex.net/api/v1/tr.json/translate?id=6e04381c.5fb014af.2b38c94b.74722d74657874-0-0&srv=tr-text&lang=ar-en&reason=paste&format=text"
     var thirdSending = new URLSearchParams({
       'text': encodeURI(word),
       'options': '4'
     })
-    // console.log(urlThird)
     fetch(urlThird, {
       method: 'POST',
       headers: {
@@ -203,106 +208,53 @@ app.post('/submitArabic', function (req, res, next) {
     var root = []
     root = await getRoot(recvData.data)
     var roots = JSON.parse(root).build
-    // console.log("ROOT--------- " + roots)
     var rootMeaning = ""
-    // console.log(search != [])
-    if(search != []){
+    if(roots != []){
+      console.log(search)
+      console.log("here^^^^^")
       var search = Array.from(roots[0])
       rootMeaning = await getMeaningRoot(search)
     }
-    // console.log("ROOT MEANING--------- " + rootMeaning)
     var wordMeaning = await getMeaning(recvData.data)
-    // console.log("WORD MEANING--------- " + wordMeaning)
     var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning, "word": recvData.data})
     res.status(200)
     res.json(sending)
   })
 })
 
-//TODO: Fix this method to include the helpers once error handled
-app.post('/submit', upload.single('Img'), function (req, res) {  
+app.post('/submitImage', upload.single('file'), function (req, res) {  
   var filePath = req.file.path
+  console.log(filePath)
+  var arabicWord = ""
   const pythonProcess = spawn('python',["ArabicImage.py", filePath]);
-  pythonProcess.stdout.on('data', (data) => {
+  pythonProcess.stdout.on('data', async (data) => {
     var recvString = data.toString()
-    console.log(recvString.substr(0, recvString.indexOf('\n')))
-    var arabic = "" 
-    arabic = recvString.substr(0, recvString.indexOf('\n'))
-    arabic = encodeURI(arabic)
-    const urlStart = "http://www.aratools.com/dict-service?query={%22dictionary%22:%22AR-EN-WORD-DICTIONARY%22,%22word%22:%22"
-    const urlEnd = "%22,%22dfilter%22:true}&format=json&_=1596542079034"
-    var url = urlStart + arabic + urlEnd
-    var REG_HEX = /&#x([a-fA-F0-9]+);/g;
-    var build = []
-    var count = 0
-    fetch(url)
-      .then(res => res.json()).then(data => {
-        var roots = data.result.length
-        data.result.forEach(element => {
-          var tmp = decodeURI(element.solution.root)
-          var decoded = tmp.replace(REG_HEX, function(match, group1){
-            var num = parseInt(group1, 16)
-            build[count] = build[count] + String.fromCharCode(num)
-          })
-          build[count] = build[count].substring(9)
-          count = count + 1
-        })
-        console.log(build)
-        var search = Array.from(build[0])
-        var newStart = "https://en.wiktionary.org/wiki/"
-        var newEnd = "#Arabic"
-        var newArabic = ""
-        for(var i = 0; i < search.length; i++){
-          search[i] = encodeURI(search[i])
-        }
-        for(var j = 0; j < search.length; j++){
-           if(j !== search.length -1){
-            newArabic = newArabic + search[j] + "_"
-           }
-           else{
-            newArabic = newArabic + search[j]
-           }
-        }
-        var newURL = newStart + newArabic + newEnd
-        console.log(newURL)
-        fetch(newURL, {
-          method: 'GET',
-          headers: {
-            'Content-Type' : 'application/json'
-          }
-        })
-          .then(data => {
-            return data.text()
-          }).then(function (html){
-            console.log(html, " HEREEEEEEEEEEEEEEEEEEE")
-            var dom = new jsdom.JSDOM(html)
-            var meaning = dom.window.document.querySelector("ol").textContent
-            var sending = JSON.stringify({"meaning": meaning, "roots": build, "word": recvData.data})
-            res.status(201)
-            res.json(sending)
-          })
-      })
+    var returnStr = recvString.substr(0, recvString.indexOf('\n'))
+    var returnSplit = returnStr.split(" ") 
+    var returnLen = returnSplit.length - 1
+    b = new Array(returnLen)
+    for(var x = 0; x < returnLen; x++){
+      b[x] = parseInt(returnSplit[x])
+    }
+    for(var a = 0; a < b.length; a++){
+      arabicWord += String.fromCharCode(b[a])
+    }
+    console.log(arabicWord)
+    var root = []
+    root = await getRoot(arabicWord)
+    var roots = JSON.parse(root).build
+    var rootMeaning = ""
+    if(roots != []){
+      var search = Array.from(roots[0])
+      rootMeaning = await getMeaningRoot(search)
+      console.log(arabicWord)
+    }
+    var wordMeaning = await getMeaning(arabicWord)
+    console.log(arabicWord)
+    var sending = JSON.stringify({"root": root, "rootMeaning": rootMeaning, "wordMeaning": wordMeaning, "word": arabicWord})
+    res.status(200)
+    res.json(sending)
   });
-})
-
-var errorUpload = multer({ dest: 'error/' })
-var errStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'new')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now())
-  }
-})
-var errorUpload = multer({ storage: errStorage })
-
-app.post('/submitError', function (req, res) { 
-  // var filePath = req.file.path
-  // console.log(filePath)
-  console.log("Inside")
-})
-app.post('/submitErrorTwo', function (req, res){
-  console.log("works")
 })
 
 //starting the app

@@ -60,15 +60,15 @@
               <p style="margin-left: -10%; font-size: 36px;">Submit transliteration!</p>
             </div>
               <form action="submitArabic" method="POST" enctype="application/json">
-                  <input type="textarea" id="text" style="height: 34px">
-                  <input type="submit" class="btn btn-primary" value="Submit" onclick="submitform(); return false">
+                <input type="textarea" id="text" style="height: 34px">
+                <input type="submit" class="btn btn-primary" value="Submit" onclick="submitform(); return false">
               </form>
               <div>
                 <p style="margin-left: -10%; font-size: 36px;"><br>Or upload a photo!</p>
               </div>
-              <form action="submit" method="POST" enctype="multipart/form-data">
-                <input type="file" style="height: 34px" name="Img" /><br>
-                <input type="submit" value="Submit" style="margin-left: 3.5%;" class="btn btn-success">
+              <form action="submitImage" method="POST" enctype="multipart/form-data">
+                <input type="file" id="inputFile" style="height: 34px" name="Img" /><br>
+                <input type="button" value="Submit" style="margin-left: 3.5%;" class="btn btn-success" onclick="submitformImage(); return false">
               </form>      
           </div>
           </div>
