@@ -77,9 +77,17 @@ function submitform(){
   
       if(frontJSON.wordArr.length){
         for(let items in frontJSON.wordArr){
+          console.log(frontJSON.wordArr[items].indexOf("."))
+          if(frontJSON.wordArr[items].indexOf(".") != -1){
+            console.log("yup")
+            continue
+          }
+          else{
+            console.log("nope")
+          }
           // Nouns
           if(frontJSON.wordArr[items].includes('”)') && !frontJSON.wordArr[items].includes('Form')){
-            console.log(frontJSON.wordArr[items])
+            console.log("noun")
             var colOne = document.createElement("tr")
             var nounRowCell = document.createElement("td")
             var firstDiv = document.createElement("div")
@@ -92,7 +100,10 @@ function submitform(){
             rowOne.append(firstDiv)
           }
           // Verbs 
-          else if(items > 0){
+          else if(items > 0 && frontJSON.wordArr[items].indexOf(".") == -1 && !frontJSON.wordArr[items].includes("• (")){
+            console.log("verb")
+            console.log(frontJSON.wordArr[items])
+            console.log("here")
             if(frontJSON.wordArr[items].includes("Form")){
               console.log(frontJSON.wordArr[items])
               var verbRow = document.createElement("tr")
@@ -107,6 +118,7 @@ function submitform(){
               rowTwo.append(verbRow)
             }
             else{
+              console.log(frontJSON.wordArr[items])
               var verbRowCell = document.createElement("td")
               var firstMatch = document.createElement("p")
               var matchText = document.createTextNode(frontJSON.wordArr[items])

@@ -210,8 +210,6 @@ app.post('/submitArabic', function (req, res, next) {
     var roots = JSON.parse(root).build
     var rootMeaning = ""
     if(roots != []){
-      console.log(search)
-      console.log("here^^^^^")
       var search = Array.from(roots[0])
       rootMeaning = await getMeaningRoot(search)
     }
@@ -263,5 +261,4 @@ app.listen(port, () => console.log(`App listening on port ${port}!`));
 //testing
 // تأكل -- breaks
 // اختبار -- works
-// رسم -- breaks
-//
+// مترجم - error handle, (has a .)
