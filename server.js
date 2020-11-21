@@ -220,13 +220,14 @@ app.post('/submitArabic', function (req, res, next) {
   })
 })
 
-app.post('/submitImage', upload.single('file'), function (req, res) {  
+app.post('/submitImage', upload.single('image'), function (req, res) {  
   var filePath = req.file.path
   console.log(filePath)
   var arabicWord = ""
   const pythonProcess = spawn('python',["ArabicImage.py", filePath]);
   pythonProcess.stdout.on('data', async (data) => {
     var recvString = data.toString()
+    console.log(recvString, "here")
     var returnStr = recvString.substr(0, recvString.indexOf('\n'))
     var returnSplit = returnStr.split(" ") 
     var returnLen = returnSplit.length - 1
