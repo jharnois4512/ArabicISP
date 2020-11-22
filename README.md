@@ -4,9 +4,10 @@
 
 
 ## How to start
-Run the command
+To start the server, you will need to run the two following commands:
+```npm install```
 ```npm start```
-to start running the program
+This should start running your NodeJS server on port 7000.
 
 ## User guide 
 
