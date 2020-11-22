@@ -2,6 +2,8 @@
 
 ## Project members
 
+[Yandex Translate](https://translate.yandex.com)
+
 ## How to start
 To start the server, you will need to run the two following commands:
 ```npm install```
