@@ -17,7 +17,7 @@ There are a few things that need to be done to update the Yandexi API. It does e
 of time. To accomplish this, follow these steps:
 <ol>
   
-  <li>Visit [Yandex Translate](https://translate.yandex.com/)</li>
+  <li>Visit [Yandex Translate] (https://translate.yandex.com/)</li>
   <li>Open up the development tools by either right clicking and clicking "inspect element" or hitting F12</li>
   <li>Navigate to the `Network` tab at the top</li>
 </ol>
